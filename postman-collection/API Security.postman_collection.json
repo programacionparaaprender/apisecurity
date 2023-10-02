@@ -1,0 +1,2909 @@
+{
+	"info": {
+		"_postman_id": "dc8d25ee-8d5b-4e98-a9f8-d908bd92800e",
+		"name": "Course - API Security",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SQL Injection",
+			"item": [
+				{
+					"name": "JDBC Danger",
+					"item": [
+						{
+							"name": "Customer - Get By Email",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/danger/v1/customer/:email",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"danger",
+										"v1",
+										"customer",
+										":email"
+									],
+									"variable": [
+										{
+											"key": "email",
+											"value": "1' and 1 = 2 union SELECT null, string_agg(table_name, ','), null, null, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --",
+											"type": "string",
+											"description": "Path variable:\n\ngood:\naangel2@ihg.com\n\nbad, guessing database mysql: \n1' and 1 = 2 union SELECT null, @@version, null, null, null --\n\nbad, guessing database postgres:\n1' and 1 = 2 union SELECT null, version(), null, null, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --\n\nbad, get all table names:\n1' and 1 = 2 union SELECT null, string_agg(table_name, ','), null, null, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Customer - Get By Gender",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/danger/v1/customer",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"danger",
+										"v1",
+										"customer"
+									],
+									"query": [
+										{
+											"key": "genderCode",
+											"value": "M",
+											"description": "good",
+											"disabled": true
+										},
+										{
+											"key": "genderCode",
+											"value": "M' union SELECT null, table_name, null, current_date, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --",
+											"description": "bad, geting all table names",
+											"disabled": true
+										},
+										{
+											"key": "genderCode",
+											"value": "M' ; drop table jdbc_merchant;--",
+											"description": "bad, dropping table",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Customer - Create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"fullName\": \"Peter Parker\",\r\n    \"email\": \"peter.parker@marvel.com\",\r\n    \"birthDate\": \"2000-12-31\",\r\n    \"gender\": \"M'); DROP table jdbc_merchant --\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/danger/v1/customer",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"danger",
+										"v1",
+										"customer"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Customer - Update Name",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"newFullName\": \"Peter Parker''; drop table jdbc_merchant --\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/danger/v1/customer/5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"danger",
+										"v1",
+										"customer",
+										"5"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "JDBC Safe",
+					"item": [
+						{
+							"name": "Customer - Get By Email",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/safe/v1/customer/:email",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"safe",
+										"v1",
+										"customer",
+										":email"
+									],
+									"variable": [
+										{
+											"key": "email",
+											"value": "aangel2@ihg.com",
+											"type": "string",
+											"description": "Path variable:\n\ngood:\naangel2@ihg.com\n\nbad, guessing database mysql: \n1' and 1 = 2 union SELECT null, @@version, null, null, null --\n\nbad, guessing database postgres:\n1' and 1 = 2 union SELECT null, version(), null, null, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --\n\nbad, get all table names:\n1' and 1 = 2 union SELECT null, string_agg(table_name, ','), null, null, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Customer - Get By Gender",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/safe/v1/customer?genderCode=M' ; drop table jdbc_merchant;--",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"safe",
+										"v1",
+										"customer"
+									],
+									"query": [
+										{
+											"key": "genderCode",
+											"value": "M",
+											"description": "good",
+											"disabled": true
+										},
+										{
+											"key": "genderCode",
+											"value": "M' ; drop table jdbc_merchant;--",
+											"description": "bad, dropping table"
+										},
+										{
+											"key": "genderCode",
+											"value": "M' union SELECT null, table_name, null, current_date, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --",
+											"description": "bad, geting all table names",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Customer - Create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"fullName\": \"Peter Parker\",\r\n    \"email\": \"peter.parker@marvel.com\",\r\n    \"birthDate\": \"2000-12-31\",\r\n    \"gender\": \"M'); DROP table jdbc_merchant --\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/safe/v1/customer",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"safe",
+										"v1",
+										"customer"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Customer - Update Name",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"newFullName\": \"Peter Parker'; drop table jdbc_merchant --\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/safe/v1/customer/5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"safe",
+										"v1",
+										"customer",
+										"5"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "JDBC Spring",
+					"item": [
+						{
+							"name": "Customer - Get By Email",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/crud/v1/customer/:email",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"crud",
+										"v1",
+										"customer",
+										":email"
+									],
+									"variable": [
+										{
+											"key": "email",
+											"value": "aangel2@ihg.com",
+											"type": "string",
+											"description": "Path variable:\n\ngood:\naangel2@ihg.com\n\nbad, guessing database mysql: \n1' and 1 = 2 union SELECT null, @@version, null, null, null --\n\nbad, guessing database postgres:\n1' and 1 = 2 union SELECT null, version(), null, null, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --\n\nbad, get all table names:\n1' and 1 = 2 union SELECT null, string_agg(table_name, ','), null, null, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Customer - Get By Gender",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/crud/v1/customer?genderCode=M",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"crud",
+										"v1",
+										"customer"
+									],
+									"query": [
+										{
+											"key": "genderCode",
+											"value": "M"
+										},
+										{
+											"key": "genderCode",
+											"value": "M' ; drop table jdbc_merchant;--",
+											"description": "bad, dropping table",
+											"disabled": true
+										},
+										{
+											"key": "genderCode",
+											"value": "M' union SELECT null, table_name, null, current_date, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --",
+											"description": "bad, geting all table names",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Customer - Create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"fullName\": \"Peter Parker\",\r\n    \"email\": \"peter.parker@marvel.com\",\r\n    \"birthDate\": \"2000-12-31\",\r\n    \"gender\": \"M'); DROP table jdbc_merchant --\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/crud/v1/customer",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"crud",
+										"v1",
+										"customer"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Customer - Update Name",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"newFullName\": \"Peter Parker'; drop table jdbc_merchant --\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/crud/v1/customer/5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"crud",
+										"v1",
+										"customer",
+										"5"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "JPA Danger",
+					"item": [
+						{
+							"name": "Customer - Get By Email",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/danger/v2/customer/:email",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"danger",
+										"v2",
+										"customer",
+										":email"
+									],
+									"variable": [
+										{
+											"key": "email",
+											"value": "asturch1@bbb.org",
+											"type": "string",
+											"description": "Path variable:\ngood:\nasturch1@bbb.org\n\nbad, guessing database mysql: \n1' and 1 = 2 union SELECT null, @@version, null, null, null --\n\nbad, guessing database postgres:\n1' and 1 = 2 union SELECT null, version(), null, null, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --\n\nbad, get all table names:\n1' and 1 = 2 union SELECT null, string_agg(table_name, ','), null, null, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Customer - Get By Gender",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/danger/v2/customer?genderCode=M' or 'x' = 'x",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"danger",
+										"v2",
+										"customer"
+									],
+									"query": [
+										{
+											"key": "genderCode",
+											"value": "M",
+											"description": "good",
+											"disabled": true
+										},
+										{
+											"key": "genderCode",
+											"value": "M' or 'x' = 'x",
+											"description": "bad, getting all rows"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "JPA Safe",
+					"item": [
+						{
+							"name": "Customer - Get By Email",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/safe/v2/customer/:email",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"safe",
+										"v2",
+										"customer",
+										":email"
+									],
+									"variable": [
+										{
+											"key": "email",
+											"value": "speperell0@creativecommons.org",
+											"type": "string",
+											"description": "Path variable:\ngood:\nspeperell0@creativecommons.org\n\nbad, guessing database mysql: \n1' and 1 = 2 union SELECT null, @@version, null, null, null --\n\nbad, guessing database postgres:\n1' and 1 = 2 union SELECT null, version(), null, null, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --\n\nbad, get all table names:\n1' and 1 = 2 union SELECT null, string_agg(table_name, ','), null, null, null FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE' --"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Customer - Get By Gender",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/sqlinjection/safe/v2/customer?genderCode=M' or 'x' = 'x",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"sqlinjection",
+										"safe",
+										"v2",
+										"customer"
+									],
+									"query": [
+										{
+											"key": "genderCode",
+											"value": "M",
+											"description": "good",
+											"disabled": true
+										},
+										{
+											"key": "genderCode",
+											"value": "M' or 'x' = 'x",
+											"description": "bad, getting all rows"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Cross Site Scripting (XSS)",
+			"item": [
+				{
+					"name": "Danger",
+					"item": [
+						{
+							"name": "Simple - Greeting",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/xss/danger/v1/greeting?name=Anna <img src='x' onerror='alert(\"This is XSS\")'>",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"xss",
+										"danger",
+										"v1",
+										"greeting"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "Anna",
+											"description": "Good",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "Anna <img src='x' onerror='alert(\"This is XSS\")'>",
+											"description": "Bad"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Simple - Download File",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/xss/danger/v1/file",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"xss",
+										"danger",
+										"v1",
+										"file"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Article - Search",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/xss/danger/v1/article?query=star",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"xss",
+										"danger",
+										"v1",
+										"article"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "star"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Article - Create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"article\": \"This is some <em>article</em> with accept <strong>html tags</strong>\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/xss/danger/v1/article",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"xss",
+										"danger",
+										"v1",
+										"article"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Safe",
+					"item": [
+						{
+							"name": "Simple - Greeting",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/xss/safe/v1/greeting?name=Elsa <img src='x' onerror='alert(\"This is XSS\")'>",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"xss",
+										"safe",
+										"v1",
+										"greeting"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "Elsa",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "Elsa <img src='x' onerror='alert(\"This is XSS\")'>"
+										},
+										{
+											"key": null,
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Simple - Download File",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/xss/safe/v1/file",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"xss",
+										"safe",
+										"v1",
+										"file"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Article - Search",
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {
+									"accept": true
+								}
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/xss/safe/v1/article?query=star",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"xss",
+										"safe",
+										"v1",
+										"article"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "star"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Article - Create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"article\": \"This is some <em>article</em> with accept <strong>html tags</strong>\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/xss/safe/v1/article",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"xss",
+										"safe",
+										"v1",
+										"article"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Denial of Service (DoS)",
+			"item": [
+				{
+					"name": "Green",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/dos/v1/green",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"dos",
+								"v1",
+								"green"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Blue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/dos/v1/blue",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"dos",
+								"v1",
+								"blue"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Red",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/dos/v1/red",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"dos",
+								"v1",
+								"red"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Random Colors",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/dos/v1/random-colors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"dos",
+								"v1",
+								"random-colors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Random Colors Pagination",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/dos/v1/random-colors-pagination?page=1&size=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"dos",
+								"v1",
+								"random-colors-pagination"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Encode, Encrypt, Hash",
+			"item": [
+				{
+					"name": "Encode - Base64",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "original",
+								"value": "JustTheOriginalString",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\" : \"She didn't understand how changed worked. When she looked at today compared to yesterday, there was nothing that she could see that was different. Yet, when she looked at today compared to last year, she couldn't see how anything was ever the same.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/encode/base64",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"encode",
+								"base64"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Decode - Base64",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "original",
+								"value": "JustTheOriginalString",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/decode/base64?encoded=UGxlYXNlIEVuY29kZSBUaGlzIFN0cmluZw==",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"decode",
+								"base64"
+							],
+							"query": [
+								{
+									"key": "encoded",
+									"value": "UGxlYXNlIEVuY29kZSBUaGlzIFN0cmluZw=="
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Encode - URL",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "original",
+								"type": "text",
+								"value": "JustTheOriginalString"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\" : \"is two + three * 4 = twenty?\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/encode/url",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"encode",
+								"url"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Decode - URL",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "original",
+								"type": "text",
+								"value": "JustTheOriginalString"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/decode/url?encoded=three+++two+%3D+five",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"decode",
+								"url"
+							],
+							"query": [
+								{
+									"key": "encoded",
+									"value": "three+++two+%3D+five"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Encrypt - AES",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\" : \"JustSomeString\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/encrypt/aes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"encrypt",
+								"aes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Decrypt - AES",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "original",
+								"type": "text",
+								"value": "JustTheOriginalString"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/decrypt/aes?encrypted=cb2fa4b8c02f17aadff056d12597178b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"decrypt",
+								"aes"
+							],
+							"query": [
+								{
+									"key": "encrypted",
+									"value": "cb2fa4b8c02f17aadff056d12597178b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hash - SHA256",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\" : \"This is another string to hash\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/hash/sha256",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"hash",
+								"sha256"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hash - SHA256 Match",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Hash",
+								"value": "17f3522138f8f57badf39e5960b21f6d316124732323749a3703725a750e8f87",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\" : \"This is another string to hash\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/hash/sha256/match",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"hash",
+								"sha256",
+								"match"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hash - BCrypt",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\" : \"MySuperSecretPasswordIsThisOne\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/hash/bcrypt",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"hash",
+								"bcrypt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hash - Bcrypt Match",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Hash",
+								"value": "$2y$05$WjjKXkf0RxLOLEDKbCDfTuS.zUHStatCVmsrkGb4NlQ22w5/w7Ytq",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\" : \"MySuperSecretPasswordIsThisOne\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/hash/bcrypt/match",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"hash",
+								"bcrypt",
+								"match"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Hash-Based Message Authentication (HMAC)",
+			"item": [
+				{
+					"name": "Create HMAC",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Verb-Calculate",
+								"value": "GET",
+								"type": "text"
+							},
+							{
+								"key": "X-Uri-Calculate",
+								"value": "/api/hmac/info",
+								"type": "text"
+							},
+							{
+								"key": "x-Register-Date",
+								"value": "2020-02-20",
+								"type": "text"
+							},
+							{
+								"key": "X-Nonce",
+								"value": "14Ns7vZa",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\" : \"Tim Drake\",\r\n    \"city\" : \"Gotham\",\r\n    \"amount\" : 18029,\r\n    \"gender\" : \"MALE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/hmac/calculate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"hmac",
+								"calculate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check HMAC",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-Register-Date",
+								"type": "text",
+								"value": "2020-02-20"
+							},
+							{
+								"key": "X-Nonce",
+								"type": "text",
+								"value": "14Ns7vZa"
+							},
+							{
+								"key": "X-Hmac",
+								"value": "bcbf62e43f7e3c99e75d72d6da663abec5f45611f759e52209cb991c6d57107d",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\" : \"Tim Drake\",\r\n    \"city\" : \"New York\",\r\n    \"amount\" : 18029,\r\n    \"gender\" : \"male\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/hmac/info",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"hmac",
+								"info"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Basic Authentication",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"olaf@apisecurity.com\",\r\n    \"password\" : \"Yellow810Sun\",\r\n    \"displayName\" : \"Olaf the Snowman\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/basic/v1/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"basic",
+								"v1",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Time",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin@apisecurity.com",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "Blue181Ocean",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/basic/v1/time",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"basic",
+								"v1",
+								"time"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Audit Log",
+			"item": [
+				{
+					"name": "Random Status",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\" : \"Just a dummy string to be logged : {{$randomFullName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/log/v1/random-status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"log",
+								"v1",
+								"random-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Access Control List",
+			"item": [
+				{
+					"name": "One (GET)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/acl/v1/one",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"acl",
+								"v1",
+								"one"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "One (DELETE)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/acl/v1/one",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"acl",
+								"v1",
+								"one"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Two",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/acl/v1/anypath/two",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"acl",
+								"v1",
+								"anypath",
+								"two"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Three",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/acl/v1/somepath/morepath/three",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"acl",
+								"v1",
+								"somepath",
+								"morepath",
+								"three"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Four",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/acl/v1/anypath/evenmorepath/four",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"acl",
+								"v1",
+								"anypath",
+								"evenmorepath",
+								"four"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "basic",
+				"basic": [
+					{
+						"key": "password",
+						"value": "Green529Forest",
+						"type": "string"
+					},
+					{
+						"key": "username",
+						"value": "elsa@apisecurity.com",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Session Cookie",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "Green529Forest",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "elsa@apisecurity.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/session-cookie/v1/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"session-cookie",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Time",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRF",
+								"value": "725b2b70ed49b0b6807e195f0994d9c3125d686689426d19a2e1d6a05c564182",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/session-cookie/v1/time",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"session-cookie",
+								"v1",
+								"time"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-CSRF",
+								"value": "725b2b70ed49b0b6807e195f0994d9c3125d686689426d19a2e1d6a05c564182",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/session-cookie/v1/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"session-cookie",
+								"v1",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cross Origin Resource Sharing (CORS)",
+			"item": [
+				{
+					"name": "Ping (Preflight)",
+					"request": {
+						"method": "OPTIONS",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://192.168.0.13:8080",
+								"type": "text"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"value": "GET",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/cors/v1/ping",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cors",
+								"v1",
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ping (Actual)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://127.0.0.1:8080",
+								"type": "text"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"value": "GET",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/cors/v1/ping",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cors",
+								"v1",
+								"ping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pong (Preflight)",
+					"request": {
+						"method": "OPTIONS",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://192.168.0.13:8080",
+								"type": "text"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"value": "POST",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/cors/v1/pong",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cors",
+								"v1",
+								"pong"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pong (Actual)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/cors/v1/pong",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cors",
+								"v1",
+								"pong"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mad (Preflight)",
+					"request": {
+						"method": "OPTIONS",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://192.168.0.13:8080",
+								"type": "text"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"value": "GET",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/cors/v1/mad",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cors",
+								"v1",
+								"mad"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mad (Actual)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"type": "text",
+								"value": "http://127.0.0.1:8080"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"type": "text",
+								"value": "GET"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/cors/v1/mad",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cors",
+								"v1",
+								"mad"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Max (Preflight)",
+					"request": {
+						"method": "OPTIONS",
+						"header": [
+							{
+								"key": "Origin",
+								"type": "text",
+								"value": "http://192.168.0.13:8080"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"type": "text",
+								"value": "POST"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/cors/v1/max",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cors",
+								"v1",
+								"max"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Max (Actual)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://127.0.0.1:8080",
+								"type": "text"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"value": "GET",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/cors/v1/max",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cors",
+								"v1",
+								"max"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cookie (Actual)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"type": "text",
+								"value": "http://127.0.0.1:8080"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"type": "text",
+								"value": "GET"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/cors/v1/cookie",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"cors",
+								"v1",
+								"cookie"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Redis Token",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "Green529Forest",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "elsa@apisecurity.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/redis/v1/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"redis",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Time",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "2IXCkhcsAd98xUPhph3PFAc5uXR89o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/redis/v1/time",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"redis",
+								"v1",
+								"time"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "2IXCkhcsAd98xUPhph3PFAc5uXR89o",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-CSRF",
+								"value": "ad02e18d5da66c15d0b6e51f5cc59e812f90be08a88dc18925fcf8280e24b62f",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/redis/v1/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"redis",
+								"v1",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Json Web Token (JWT)",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "Green529Forest",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "elsa@apisecurity.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/jwt/v1/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"jwt",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Time",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOlsiaHR0cHM6Ly9hcGlzZWN1cml0eS5jb20iLCJodHRwczovL3d3dy5hcGlzZWN1cml0eS5jb20iXSwiaXNzIjoiYXBpc2VjdXJpdHkuY29tIiwic2FtcGxlUHJpdmF0ZUNsYWltIjoianVzdC1zb21lLXByaXZhdGUtY2xhaW0tdG8tYmUtdmFsaWRhdGVkIiwiZXhwIjoxNjExOTc0NTcwfQ.jPIFyoEY-c76dkV_-dCQqpHQBcThFppuBro4hRHHPw4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRF",
+								"value": "d828ba80224dbce7d77f2ccf32ab01229db722c960c45121e59a3df41ec25eb0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/jwt/v1/time",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"jwt",
+								"v1",
+								"time"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Redis-JWT",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "Green529Forest",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "elsa@apisecurity.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/redis-jwt/v1/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"redis-jwt",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Time",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmOWMzNGNlZjQwMjdjZDFlNTQ3YTllYTVhMjcxNTJlM2YyNGFiMThmNzhiYWE2ZTAzNmI2N2NjNDNiYjQ0ZjI2IiwiYXVkIjpbImh0dHBzOi8vYXBpc2VjdXJpdHkuY29tIiwiaHR0cHM6Ly93d3cuYXBpc2VjdXJpdHkuY29tIl0sImlzcyI6ImFwaXNlY3VyaXR5LmNvbSIsInNhbXBsZVByaXZhdGVDbGFpbSI6Imp1c3Qtc29tZS1wcml2YXRlLWNsYWltLXRvLWJlLXZhbGlkYXRlZCIsImV4cCI6MTYxMTk3NDcyMywianRpIjoiZGNPQTB3b1JXS1lVWnVlbEpwcHFyb2ZWNUxOamVZIn0.isnE6WYPMd0Q65A2_u0JKdQ7SodfAOA5AtCDy34_xzM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRF",
+								"value": "d828ba80224dbce7d77f2ccf32ab01229db722c960c45121e59a3df41ec25eb0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/redis-jwt/v1/time",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"redis-jwt",
+								"v1",
+								"time"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmOWMzNGNlZjQwMjdjZDFlNTQ3YTllYTVhMjcxNTJlM2YyNGFiMThmNzhiYWE2ZTAzNmI2N2NjNDNiYjQ0ZjI2IiwiYXVkIjpbImh0dHBzOi8vYXBpc2VjdXJpdHkuY29tIiwiaHR0cHM6Ly93d3cuYXBpc2VjdXJpdHkuY29tIl0sImlzcyI6ImFwaXNlY3VyaXR5LmNvbSIsInNhbXBsZVByaXZhdGVDbGFpbSI6Imp1c3Qtc29tZS1wcml2YXRlLWNsYWltLXRvLWJlLXZhbGlkYXRlZCIsImV4cCI6MTYxMTk3NDcyMywianRpIjoiZGNPQTB3b1JXS1lVWnVlbEpwcHFyb2ZWNUxOamVZIn0.isnE6WYPMd0Q65A2_u0JKdQ7SodfAOA5AtCDy34_xzM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-CSRF",
+								"type": "text",
+								"value": "d828ba80224dbce7d77f2ccf32ab01229db722c960c45121e59a3df41ec25eb0"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/redis-jwt/v1/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"redis-jwt",
+								"v1",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Json Web Encryption (JWE)",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "Green529Forest",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "elsa@apisecurity.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/jwe/v1/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"jwe",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Time",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiZGlyIn0..I8SWAnm8V9Vkf-vn.HC5M_2KXahEhuidaYY9Q8M4UcSyDjqdcGd_qmKZAZsQOnXJjtNM6Jwle0SSEesok2eHbcwIxkGKqTtRWBNR8iMqgweW_c66Twtxm5lM8Lkpua6ocmI5dgoEcpRVo2vtZrW3x8ST3-BZO3P1sq1SAUT5gYhrDJEg4wsb4pYG15njI48Dt52wbQYKn.-LtODz3zUBFY3s9dENFs2A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRF",
+								"value": "d828ba80224dbce7d77f2ccf32ab01229db722c960c45121e59a3df41ec25eb0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/jwe/v1/time",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"jwe",
+								"v1",
+								"time"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "API Key",
+			"item": [
+				{
+					"name": "Add",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "adminApiKey001",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "X-Apikey",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/apikey/v1/add?a=3&b=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"apikey",
+								"v1",
+								"add"
+							],
+							"query": [
+								{
+									"key": "a",
+									"value": "3"
+								},
+								{
+									"key": "b",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Oauth with Okta",
+			"item": [
+				{
+					"name": "Client Credential - Get Access Token",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "J963uz6d3VjreuffUMo-fKyFqem4z3tywxhRUh2j",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "0oaaase1aEthSwuk55d6",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "https://dev-61601624.okta.com/oauth2/default/v1/token?grant_type=client_credentials&scope=math:add math:subtract",
+							"protocol": "https",
+							"host": [
+								"dev-61601624",
+								"okta",
+								"com"
+							],
+							"path": [
+								"oauth2",
+								"default",
+								"v1",
+								"token"
+							],
+							"query": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials"
+								},
+								{
+									"key": "scope",
+									"value": "math:add math:subtract"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Math - Random",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/math/random",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"math",
+								"random"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Math - Add",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJraWQiOiJTaFBrMmF3eGl1a2taUnRoOGxPLVVQY1pBVkp5cEhQX3FFX0VpaE9qenE0IiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULkkzS2o4T0lHTk5DdTJtUnFXTU1XaXpYaU92aWNjWmJ5d3BjS0VqNGxNbzQiLCJpc3MiOiJodHRwczovL2Rldi05NTg0NDU0OS5va3RhLmNvbS9vYXV0aDIvZGVmYXVsdCIsImF1ZCI6ImFwaTovL2RlZmF1bHQiLCJpYXQiOjE2MTI0ODkyNDAsImV4cCI6MTYxMjQ5Mjg0MCwiY2lkIjoiMG9hNTgwa3N0NmtQbUJFVjA1ZDYiLCJzY3AiOlsibWF0aDphZGQiLCJtYXRoOnN1YnRyYWN0Il0sInN1YiI6IjBvYTU4MGtzdDZrUG1CRVYwNWQ2In0.B7DXBfb-T57OuVWtOj9dya4RH3PF6k1xRUdqiQMI9iEWwRQcuxsUx4u0wxwqrw7aMKGF5S1QUfke_BXia9btQRyOUC819rhwrzLw1_LxLVxi-wjdvBTyUu3B7xckbd_BWsdBtKgfVrJj7fk-S6Lso7uib1FuP1xFef-CmpWuoYBJTmJHNg-0dvUSrJNb_XT1DmgrxzWohvc8QxQCP3x5E_JhVrjZlgjYCWHC_d6hKiCOLEgc37SzZFXxnFE_QSVc_X3QkmM8GhYynJ8OtvjW3GKZpLCRwvOK1G3arIDJnihv7LAHAXZCHiB6KFga7GqExORMMqOwq4WuiIZA9PNStw",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/math/add?a=5&b=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"math",
+								"add"
+							],
+							"query": [
+								{
+									"key": "a",
+									"value": "5"
+								},
+								{
+									"key": "b",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Math - Subtract",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJraWQiOiJTaFBrMmF3eGl1a2taUnRoOGxPLVVQY1pBVkp5cEhQX3FFX0VpaE9qenE0IiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULkkzS2o4T0lHTk5DdTJtUnFXTU1XaXpYaU92aWNjWmJ5d3BjS0VqNGxNbzQiLCJpc3MiOiJodHRwczovL2Rldi05NTg0NDU0OS5va3RhLmNvbS9vYXV0aDIvZGVmYXVsdCIsImF1ZCI6ImFwaTovL2RlZmF1bHQiLCJpYXQiOjE2MTI0ODkyNDAsImV4cCI6MTYxMjQ5Mjg0MCwiY2lkIjoiMG9hNTgwa3N0NmtQbUJFVjA1ZDYiLCJzY3AiOlsibWF0aDphZGQiLCJtYXRoOnN1YnRyYWN0Il0sInN1YiI6IjBvYTU4MGtzdDZrUG1CRVYwNWQ2In0.B7DXBfb-T57OuVWtOj9dya4RH3PF6k1xRUdqiQMI9iEWwRQcuxsUx4u0wxwqrw7aMKGF5S1QUfke_BXia9btQRyOUC819rhwrzLw1_LxLVxi-wjdvBTyUu3B7xckbd_BWsdBtKgfVrJj7fk-S6Lso7uib1FuP1xFef-CmpWuoYBJTmJHNg-0dvUSrJNb_XT1DmgrxzWohvc8QxQCP3x5E_JhVrjZlgjYCWHC_d6hKiCOLEgc37SzZFXxnFE_QSVc_X3QkmM8GhYynJ8OtvjW3GKZpLCRwvOK1G3arIDJnihv7LAHAXZCHiB6KFga7GqExORMMqOwq4WuiIZA9PNStw",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/math/subtract?a=9&b=4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"math",
+								"subtract"
+							],
+							"query": [
+								{
+									"key": "a",
+									"value": "9"
+								},
+								{
+									"key": "b",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Math - Multiply",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJraWQiOiJTaFBrMmF3eGl1a2taUnRoOGxPLVVQY1pBVkp5cEhQX3FFX0VpaE9qenE0IiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULkkzS2o4T0lHTk5DdTJtUnFXTU1XaXpYaU92aWNjWmJ5d3BjS0VqNGxNbzQiLCJpc3MiOiJodHRwczovL2Rldi05NTg0NDU0OS5va3RhLmNvbS9vYXV0aDIvZGVmYXVsdCIsImF1ZCI6ImFwaTovL2RlZmF1bHQiLCJpYXQiOjE2MTI0ODkyNDAsImV4cCI6MTYxMjQ5Mjg0MCwiY2lkIjoiMG9hNTgwa3N0NmtQbUJFVjA1ZDYiLCJzY3AiOlsibWF0aDphZGQiLCJtYXRoOnN1YnRyYWN0Il0sInN1YiI6IjBvYTU4MGtzdDZrUG1CRVYwNWQ2In0.B7DXBfb-T57OuVWtOj9dya4RH3PF6k1xRUdqiQMI9iEWwRQcuxsUx4u0wxwqrw7aMKGF5S1QUfke_BXia9btQRyOUC819rhwrzLw1_LxLVxi-wjdvBTyUu3B7xckbd_BWsdBtKgfVrJj7fk-S6Lso7uib1FuP1xFef-CmpWuoYBJTmJHNg-0dvUSrJNb_XT1DmgrxzWohvc8QxQCP3x5E_JhVrjZlgjYCWHC_d6hKiCOLEgc37SzZFXxnFE_QSVc_X3QkmM8GhYynJ8OtvjW3GKZpLCRwvOK1G3arIDJnihv7LAHAXZCHiB6KFga7GqExORMMqOwq4WuiIZA9PNStw",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/math/multiply?a=5&b=4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"math",
+								"multiply"
+							],
+							"query": [
+								{
+									"key": "a",
+									"value": "5"
+								},
+								{
+									"key": "b",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Math - Divide",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJraWQiOiJTaFBrMmF3eGl1a2taUnRoOGxPLVVQY1pBVkp5cEhQX3FFX0VpaE9qenE0IiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULkkzS2o4T0lHTk5DdTJtUnFXTU1XaXpYaU92aWNjWmJ5d3BjS0VqNGxNbzQiLCJpc3MiOiJodHRwczovL2Rldi05NTg0NDU0OS5va3RhLmNvbS9vYXV0aDIvZGVmYXVsdCIsImF1ZCI6ImFwaTovL2RlZmF1bHQiLCJpYXQiOjE2MTI0ODkyNDAsImV4cCI6MTYxMjQ5Mjg0MCwiY2lkIjoiMG9hNTgwa3N0NmtQbUJFVjA1ZDYiLCJzY3AiOlsibWF0aDphZGQiLCJtYXRoOnN1YnRyYWN0Il0sInN1YiI6IjBvYTU4MGtzdDZrUG1CRVYwNWQ2In0.B7DXBfb-T57OuVWtOj9dya4RH3PF6k1xRUdqiQMI9iEWwRQcuxsUx4u0wxwqrw7aMKGF5S1QUfke_BXia9btQRyOUC819rhwrzLw1_LxLVxi-wjdvBTyUu3B7xckbd_BWsdBtKgfVrJj7fk-S6Lso7uib1FuP1xFef-CmpWuoYBJTmJHNg-0dvUSrJNb_XT1DmgrxzWohvc8QxQCP3x5E_JhVrjZlgjYCWHC_d6hKiCOLEgc37SzZFXxnFE_QSVc_X3QkmM8GhYynJ8OtvjW3GKZpLCRwvOK1G3arIDJnihv7LAHAXZCHiB6KFga7GqExORMMqOwq4WuiIZA9PNStw",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/math/divide?a=18&b=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"math",
+								"divide"
+							],
+							"query": [
+								{
+									"key": "a",
+									"value": "18"
+								},
+								{
+									"key": "b",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
