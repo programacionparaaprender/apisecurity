@@ -3,6 +3,8 @@ spring:
     url: jdbc:postgresql://localhost:5434/postgres
     username: sa
     password: 123    
+server:
+  port: 8080
 # logging
 logging:
   pattern:
